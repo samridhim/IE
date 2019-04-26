@@ -31,9 +31,7 @@ API Endpoint for accepting a file sent by client to the server. After receiving 
 Using fs.rename() we put the file in the current directory
 Since the file has many documents, using a file handling method to read through contents of file and using insertMany() was failing because limit of insertMany is 1000 documents at a time.
 So, I have used the command "mongoimport" which inputs the entire file as a collection in our database. On a successful insrtion, I am returining "success:1" as json response.
-
-
-Note : I was trying to use stream-json to handle the huge 150mb file, but I could not get it to work, hence I have decided to use this method.
+After the file is sent, it gets read using the createReadStream method where aggregation is happening and storing into mongo collection "data_agg"
 */
 app.post('/api/postfile', function(req, res){
   res.setHeader('Content-Type', 'application/json');
@@ -48,7 +46,7 @@ app.post('/api/postfile', function(req, res){
         if(error){
           console.log(`${error.stack}`)
          }
-         console.log(stdout);
+        //console.log(stdout);
       });
     });
   });
@@ -64,7 +62,7 @@ app.post('/api/postfile', function(req, res){
     });
     rl.on('close', function(){
      var string = JSON.parse(lines);
-      console.log(lineCount);
+      //console.log(lineCount);
       var jsonArray = [];
       var val_sum = 0;
       var x = 1;
@@ -77,10 +75,10 @@ app.post('/api/postfile', function(req, res){
           val_sum = 0;
         }
       }
-      console.log(jsonArray);
+      //console.log(jsonArray);
       db.collection("data_agg").insertMany(jsonArray);
       res.json(JSON.stringify({"success" : 1}));  
-      console.log(JSON.stringify({"success":1}));
+      //console.log(JSON.stringify({"success":1}));
   });
 });
 
@@ -91,13 +89,13 @@ At the client side, the values are used to make a line chart using ChartJS
 */
 app.post('/api/getchart', function(req, res){
   res.setHeader('Content-Type', 'application/json');
-  console.log(req.body["start"]);
+  //console.log(req.body["start"]);
   var start_int = Date.parse(req.body["start"]);
   var end_int = Date.parse(req.body["end"]);
-  console.log(start_int);
-  console.log(end_int);
+  //console.log(start_int);
+  //console.log(end_int);
   db.collection("data_agg").find({"ts":{$gte:start_int, $lte:end_int}}).sort({"ts":1}).toArray(function(err, docs) {
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });
 });
@@ -107,10 +105,10 @@ API Endpoint which is constantly receiving real time data and pushing the data i
 The inserts are done every 10 seconds to the collection "data_agg_rt"
 */
 app.post('/api/realtime', function(req, res){
-  console.log(req.body);
+  //console.log(req.body);
   db.collection("data_agg_rt").insertOne(req.body, function(err, data) {
     if(err) throw err;
-    console.log("inserted");
+    //console.log("inserted");
   });
   res.json(req.body);
 });
@@ -121,15 +119,15 @@ This endpoint does not need a start and end data since the data is real time dat
 */
 app.post('/api/getrealtimechart', function(req, res){
   res.setHeader('Content-Type', 'application/json');
-  console.log(req.body["start"]);
+  //console.log(req.body["start"]);
   var start_int = Date.parse(req.body["start"]);
-  console.log(start_int);
+  //console.log(start_int);
   db.collection("data_agg_rt").find({}).sort({"ts":1}).toArray(function(err, docs) {
     if(err)
     {
       throw err;
     }
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });
 });
