@@ -1,0 +1,41 @@
+<html>
+ <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script>
+$('document').ready(function(){
+$("form#data").submit(function(e) {
+    e.preventDefault();    
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: "http://localhost:3000/api/postfile",
+        method: 'POST',
+	contentType: 'application/json; charset=utf-8',
+        data: formData,
+	enctype:'multipart/form-data',
+        success: function (data) {
+            alert("File Transferred!");
+	        window.location = "getchart.html";
+        },
+        cache: false,
+        contentType: false,
+        processData: false,
+	error: function(data) {
+			alert(data);
+			alert("Error! :(")
+}
+    });
+});
+});
+</script>
+</head>
+<body style="margin:15px;padding:0">
+<form enctype="multipart/form-data" id = "data">
+<input type="file" name="filetoupload" class="custom-file-input"><br>
+<input type="submit" value="Send" class="btn btn-default" style="font-family:Comic Sans Ms;">
+</form>
+</body>
+</html>
+

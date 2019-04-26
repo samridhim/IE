@@ -1,0 +1,85 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+	$('document').ready(function(){
+	setInterval(function(){
+		console.log("HELLO");
+		var dates = {
+			"start":Math.round((new Date()).getDate() * 1000)
+		};
+		console.log(dates);
+		$.ajax({
+		method:'POST',
+		contentType: 'application/json; charset=utf-8',
+		url: 'http://localhost:3000/api/getrealtimechart/',
+		data: JSON.stringify(dates),
+		dataType: 'json',
+		success: function(data){
+			if(data!=-1)
+			{
+				//alert(JSON.stringify(data));
+				var keys = [];
+				var values = [];
+				$.each(data, function( key, value ) {
+					keys.push(new Date(value.ts).toUTCString());
+   					values.push(value.val);
+				});
+				console.log(keys);
+				console.log(values);
+				var ctx = $("#line-chart");
+				var data  = {
+				labels : keys,
+				datasets : [
+				{
+				label : "Temprature",
+				data : values,
+				backgroundColor : "blue",
+				borderColor : "lightblue",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 5
+				}]
+				};
+				var options = {
+				title : {
+				display : true,
+				position : "top",
+				text : "Realtime Updates",
+				fontSize : 18,
+				fontColor : "#111"
+				},
+				legend : {
+				display : true,
+				position : "bottom"
+				},
+				scales: {
+				yAxes: [{
+				ticks: {
+					max: 80,
+					min: -10,
+					stepSize: 10
+				}
+				}]
+				},
+				};
+				var chart = new Chart( ctx, {
+				type : "line",
+				data : data,
+				options : options
+				});
+            			}
+
+		},
+		error: function(){
+			alert("There was a problem signing up. :(");
+		}
+});
+}, 10000);
+});
+        </script>
+</head>
+   <canvas id="line-chart" width="800" height="450"></canvas>
+
+</html>

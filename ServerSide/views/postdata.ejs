@@ -1,0 +1,40 @@
+<html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('#formdata').on('submit', function(event){
+		event.preventDefault();
+		console.log("HELLO");
+		var dates = {
+			"start": $('#start').val(),
+		 	"end": $('#end').val(),
+		};
+		console.log(dates);
+
+		$.ajax({
+		type:'POST',
+		contentType: 'application/json; charset=utf-8',
+		url: 'http://localhost:3000/api/getchart/',
+		data: JSON.stringify(dates),
+		dataType: 'json',
+		success: function(data){
+			if(data==-1)
+			{
+				alert("You have successfully signed up!");
+				window.location.href = "/api/getchart";
+            }
+            else{
+                console.log(data);
+            }
+		},
+		error: function(){
+			alert("There was a problem signing up. :(");
+		}
+	});
+});
+        </script>
+    <form  id= "formdata">
+        <input type="date" name="start"  id= "start">
+        <input type="date" name="end" id = "end">
+        <input type="submit" value="Get Chart">      
+    </form>
+</html>

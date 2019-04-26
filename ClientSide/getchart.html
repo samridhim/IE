@@ -1,0 +1,96 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script>
+	$('document').ready(function(){
+        $('form#data').on('submit', function(event){
+		event.preventDefault();
+		console.log("HELLO");
+		var dates = {
+			"start": $('#start').val(),
+		 	"end": $('#end').val(),
+		};
+		console.log(dates);
+		$.ajax({
+		method:'POST',
+		contentType: 'application/json; charset=utf-8',
+		url: 'http://localhost:3000/api/getchart/',
+		data: JSON.stringify(dates),
+		dataType: 'json',
+		success: function(data){
+			if(data!=-1)
+			{
+				var keys = [];
+				var values = [];
+				$.each(data, function( key, value ) {
+					keys.push(new Date(value.ts).toUTCString());
+   					values.push(value.val);
+				});
+				console.log(keys);
+				console.log(values);
+				var ctx = $("#line-chart");
+				var data  = {
+				labels : keys,
+				datasets : [
+				{
+				label : "Temprature",
+				data : values,
+				backgroundColor : "blue",
+				borderColor : "lightblue",
+				fill : false,
+				lineTension : 0,
+				pointRadius : 1,
+				pointHoverRadius: 1
+				}]
+				};
+				var options = {
+				title : {
+				display : true,
+				position : "top",
+				text : "Line Graph",
+				fontSize : 18,
+				fontColor : "#111"
+				},
+				legend : {
+				display : true,
+				position : "bottom"
+				},
+				scales: {
+				yAxes: [{
+				ticks: {
+					max: 80,
+					min: -10,
+					stepSize: 10
+				}
+				}]
+				},
+				};
+				var chart = new Chart( ctx, {
+				type : "line",
+				data : data,
+				options : options
+				});
+            			}
+
+		},
+		error: function(){
+			alert("There was a problem getting the data:(");
+		}
+	});
+});
+
+});
+        </script>
+</head>
+<body style="margin:15px;padding:0">
+    <form id= "data">
+        <input type="date" name="start"  id= "start">
+        <input type="date" name="end" id = "end">
+        <input type="submit" class="btn btn-default" value="Get Chart">      
+    </form>
+   <canvas id="line-chart" width="800" height="450"></canvas>
+</body>
+</html>

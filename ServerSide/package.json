@@ -1,0 +1,22 @@
+{
+  "name": "test_node",
+  "version": "1.0.0",
+  "description": "Simple Node App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "JSONStream": "*",
+    "body-parser": "*",
+    "child_process": "*",
+    "cors": "^2.8.5",
+    "ejs": "^2.6.1",
+    "express": "*",
+    "formidable": "*",
+    "mongoose": "*",
+    "stream-json": "^1.2.1"
+  },
+  "author": "Samridhi Maheshwari",
+  "license": "ISC"
+}
